@@ -2,9 +2,10 @@
   "name": "backend_by_hitesh",
   "version": "1.0.0",
   "description": "mern project",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   },
   "keywords": [
     "javascript",
@@ -12,8 +13,5 @@
     "js"
   ],
   "author": "Bilal Aulakh",
-  "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  }
+  "license": "ISC"
 }
