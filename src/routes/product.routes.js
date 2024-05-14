@@ -7,10 +7,7 @@ import { upload } from "../middlewares/multer.middlewares.js";
 const router = Router();
 
 router.route('/add-product').post(
-  upload.fields([
-    { name: "imageFile"},
-   
-  ]),
+  upload.fields([{ name: "imageFile" }]),
   verifyJWT,
   productCreate
 );

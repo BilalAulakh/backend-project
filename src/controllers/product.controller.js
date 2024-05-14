@@ -3,8 +3,8 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadCloudinary } from "../utils/cloudinary.js";
-import mongoose from "mongoose";
+// import { uploadCloudinary } from "../utils/cloudinary.js";
+// import mongoose from "mongoose";
 
 const productCreate = asyncHandler(async (req, res) => {
   const { productName, productPrice, postDate } = req.body;
@@ -53,7 +53,7 @@ const productCreate = asyncHandler(async (req, res) => {
     postDate,
     owner: userId._id,
   });
-
+console.log('product are ',user)
   res
     .status(201)
     .json(
@@ -61,89 +61,88 @@ const productCreate = asyncHandler(async (req, res) => {
     );
 });
 
-const getAllProducts = asyncHandler(async (req, res) => {
-  try {
-    // const id = req.params.id;
-    const product = await Product.find({});
-
-    if (!product) {
-      throw new ApiError(404, "Product not found");
-    }
-
-    const productsWithUserDetails = await Product.aggregate([
-      // {
-      //   $match: { _id: mongoose.Types.ObjectId(id) },
-      // },
-      {
-        $lookup: {
-          from: "users",
-          localField: "owner",
-          foreignField: "_id",
-          as: "user",
-        },
-      },
-      {
-        $addFields: {
-          user: {
-            $arrayElemAt: ["$user", 0] // Select the first element of the user array
-          }
-        }
-      },
-      {
-        $project: {
-          _id: 1,
-          productName: 1,
-          productPrice:1,
-          // imageFile:[],
-          // Include other product fields here
-          user: { username: 1, email: 1 } // Include only username and email from user
-        }
-      }
-    ]);
-
-    console.log("Product with user details:", productsWithUserDetails);
-
-    res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { product: productsWithUserDetails },
-          "Product retrieved successfully"
-        )
-      );
-  } catch (error) {
-    console.error(error);
-    res.status(error.statusCode || 500).json({ message: error.message });
-  }
-});
-
-
-
 // const getAllProducts = asyncHandler(async (req, res) => {
 //   try {
-//     const id = req.params.id;
-//     const products = await Product.findById(id);
+//     // const id = req.params.id;
+//     const product = await Product.find({});
 
-//     if (!products || products.length === 0) {
-//       throw new ApiError(404, 'No products found');
+//     if (!product) {
+//       throw new ApiError(404, "Product not found");
 //     }
-//     const productss = await Product.aggregate([
+
+//     const productsWithUserDetails = await Product.aggregate([
+//       // {
+//       //   $match: { _id: mongoose.Types.ObjectId(id) },
+//       // },
 //       {
 //         $lookup: {
-//           from: 'users',
-//           localField: 'owner',
-//           foreignField: '_id',
-//           as: 'user',
+//           from: "users",
+//           localField: "owner",
+//           foreignField: "_id",
+//           as: "user",
 //         },
 //       },
+//       {
+//         $addFields: {
+//           user: {
+//             $arrayElemAt: ["$user", 0] // Select the first element of the user array
+//           }
+//         }
+//       },
+//       {
+//         $project: {
+//           _id: 1,
+//           productName: 1,
+//           productPrice:1,
+//           // imageFile:[],
+//           // Include other product fields here
+//           user: { username: 1, email: 1 } // Include only username and email from user
+//         }
+//       }
 //     ]);
 
-// console.log('products are ',productss)
-//     res.status(200).json(new ApiResponse(200, { products }, 'Products retrieved successfully'));
+//     console.log("Product with user details:", productsWithUserDetails);
+
+//     res
+//       .status(200)
+//       .json(
+//         new ApiResponse(
+//           200,
+//           { product: productsWithUserDetails },
+//           "Product retrieved successfully"
+//         )
+//       );
 //   } catch (error) {
-//     console.error(error); // Log the error for debugging
-//     res.status(error.statusCode || 500).json({ message: error.message }); // Handle errors gracefully
+//     console.error(error);
+//     res.status(error.statusCode || 500).json({ message: error.message });
 //   }
 // });
+
+
+
+const getAllProducts = asyncHandler(async (req, res) => {
+  try {
+    
+    const products = await Product.find({});
+
+    if (!products || products.length === 0) {
+      throw new ApiError(404, 'No products found');
+    }
+
+
+// const productDetail=products.map((val)=>(val.productName))
+
+// const combinedObject = productDetail.reduce((acc, val, index) => {
+//     acc[`${index + 1}`] = val;
+//     return acc;
+// }, {});
+
+// console.log(combinedObject);
+
+    res.status(200).json(new ApiResponse(200, { products }, 'Products retrieved successfully'));
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(error.statusCode || 500).json({ message: error.message }); // Handle errors gracefully
+  }
+});
 export { productCreate, getAllProducts };
